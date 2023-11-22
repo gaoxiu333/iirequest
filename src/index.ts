@@ -2,37 +2,36 @@
 
 import axios from "axios";
 
-export default async function (url: string) {
-  const response = await axios.get(url);
-  return response.data;
-}
+const service = axios.create({
+  baseURL: "https://jsonplaceholder.typicode.com",
+  timeout: 1000,
+});
 
-export const DEFAULT_HEADERS = {
-  "Content-Type": "application/json",
-  Accept: "application/json",
-};
-
-const DEFAULT_CONFIG = {
-  timeout: 0,
-};
-
-const create = (config) => {
-  const headers = {
-    ...(config.headers || {}),
-  };
-  let instance;
-  if (config.axiosInstance) {
-    instance = config.axiosInstance;
-  } else {
-    const configWithoutHeaders = { ...config, heaer: undefined };
-    const combinedConfig = {
-      ...DEFAULT_CONFIG,
-      ...configWithoutHeaders,
-    };
-    instance = axios.create(combinedConfig);
+service.interceptors.request.use(
+  (config) => {
+    // token
+    return config;
+  },
+  (error) => {
+    // TODO: 验证 reqct-query以及正常情况下 catch error能力
+    Promise.reject(error);
   }
-  const monitors = [];
-  const addMonitor = (monitor) => {
-    monitor.push(monitor);
-  };
-};
+);
+
+service.interceptors.response.use(
+  (response) => {
+    // TODO: 同样验证 reqct-query以及正常情况下 catch error能力=> code 非200的错误
+    if (response.data) {
+      return response.data;
+    }
+    if (response.code !== 200) {
+      return Promise.reject(new Error(response.message || "Error"));
+    }
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export default service;
