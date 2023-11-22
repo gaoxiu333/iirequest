@@ -18,6 +18,8 @@ pnpm add tslib -D
 ## 参考
 
 [参考1](https://github.com/infinitered/apisauce)
+[参考2 vue-admin](https://github.com/Armour/vue-typescript-admin-template/blob/master/src/utils/request.ts)
+[参考3 alova](https://github.com/alovajs/alova)
 
 直接在GitHub搜索axios还是挺有收获、
 
