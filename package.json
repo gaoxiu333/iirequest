@@ -17,6 +17,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@tarojs/taro": "^3.6.20",
     "axios": "^1.6.2"
   }
 }

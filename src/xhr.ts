@@ -1,4 +1,4 @@
-const createCHR = (method: string, url: string) => {
+const createXHR = (method: string, url: string) => {
   const xhr = new XMLHttpRequest();
   xhr.open(method, url);
   // 设置请求头 TODO: 设置自定义请求头呢？比如 token
