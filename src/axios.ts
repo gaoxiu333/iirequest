@@ -1,6 +1,10 @@
 // source https://github.com/infinitered/apisauce/tree/master
 
-import axios, { InternalAxiosRequestConfig } from "axios";
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+} from "axios";
 import { BASE_URL, TIMEOUT } from "./config";
 import { handleApiError, handleApiResponse } from "./utils/apiHandler";
 
@@ -17,8 +21,8 @@ function cancelRequest() {
   cancelTokenSource.cancel();
 }
 
-function createAxiosInstance() {
-  const instance = axios.create();
+function createAxiosInstance(): AxiosInstance {
+  const instance: AxiosInstance = axios.create();
 
   // 请求拦截器
   instance.interceptors.request.use(

@@ -1,20 +1,67 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-export function handleApiResponse(response: any) {
+// 定义请求和响应的类型
+interface ApiResponse<T = any> {
+  data: T;
+  status: number;
+  statusText: string;
+  headers: any;
+  config: AxiosRequestConfig;
+  request?: any;
+}
+
+export interface AxiosError<T = any> extends Error {
+  config: AxiosRequestConfig;
+  code?: string;
+  request?: any;
+  response?: AxiosResponse<T>;
+  isAxiosError: boolean;
+  toJSON: () => object;
+}
+
+export function handleApiResponse(response: ApiResponse) {
   // 处理全局响应事件，以及自定义code
   return response.data;
 }
 
-export function handleApiError(error: AxiosError) {
+const handleError = <T>(error: AxiosError<T>): Promise<ApiResponse> => {
   if (axios.isCancel(error)) {
-    console.log("Request canceled", error.message);
-  } else if (error.response) {
-    console.log("HTTP Error Status:", error.response.status);
-    console.log("Error Data:", error.response.data);
-  } else if (error.request) {
-    console.log("No response received:", error.request);
+    // 请求被取消
+    return Promise.reject({
+      status: 499,
+      statusText: "Request canceled",
+      data: null,
+      headers: {},
+      config: error.config,
+      request: error.request,
+    });
+  } else if ("response" in error) {
+    // 请求发出但服务器响应状态码不在 2xx 范围
+    const { response }: any = error;
+    return Promise.reject<ApiResponse>({
+      ...response,
+    } as ApiResponse);
+  } else if ("request" in error) {
+    // 请求发出但是服务器没有响应
+    return Promise.reject({
+      status: 0,
+      statusText: "No response received",
+      data: null,
+      headers: {},
+      config: {},
+      request: null,
+    });
   } else {
-    console.error("Error:", error.message);
+    // 其他错误
+    return Promise.reject({
+      status: -1, // 自定义其他错误的状态码
+      statusText: "Other error",
+      data: null,
+      headers: {},
+      // config: error.config,
+      config: {},
+      request: null,
+    });
   }
-  return Promise.reject(error);
-}
+  // return Promise.reject(error);
+};
