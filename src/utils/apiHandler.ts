@@ -24,7 +24,7 @@ export function handleApiResponse(response: ApiResponse) {
   return response.data;
 }
 
-const handleError = <T>(error: AxiosError<T>): Promise<ApiResponse> => {
+export const handleError = <T>(error: AxiosError<T>): Promise<ApiResponse> => {
   if (axios.isCancel(error)) {
     // 请求被取消
     return Promise.reject({

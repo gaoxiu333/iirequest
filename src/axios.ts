@@ -6,7 +6,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import { BASE_URL, TIMEOUT } from "./config";
-import { handleApiError, handleApiResponse } from "./utils/apiHandler";
+import { handleApiResponse, handleError } from "./utils/apiHandler";
 
 /**
  * 取消请求
@@ -38,7 +38,7 @@ function createAxiosInstance(): AxiosInstance {
   );
 
   // 响应拦截器
-  instance.interceptors.response.use(handleApiResponse, handleApiError);
+  instance.interceptors.response.use(handleApiResponse, handleError);
 
   return instance;
 }
